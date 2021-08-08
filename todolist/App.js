@@ -1,43 +1,65 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Button,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  FlatList,
+} from "react-native";
+import TodoInput from "./components/TodoInput";
+import TodoItem from "./components/TodoItem";
 
 export default function App() {
   const [todos, setTodos] = useState([]);
-  const [input, setInput] = useState("");
-  const inputHandler = (text) => {
-    console.log(text);
-    setInput(text);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const addTodoHnadler = (enteredTodo) => {
+    if (!enteredTodo) {
+      alert("You should enter Todo");
+      return;
+    }
+    setTodos((prevTodos) => [
+      ...prevTodos,
+      { id: Math.random().toString(), value: enteredTodo },
+    ]);
+    setIsVisible(false);
   };
 
-  const addHnadler = () => {
-    setTodos((prevTodos) => [...prevTodos, input]);
-    setInput("");
+  const deleteTodoHandler = (id) => {
+    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+  };
+
+  const makeVisble = () => {
+    setIsVisible((prevState) => !prevState);
+  };
+
+  const changeVisibleHandler = () => {
+    setIsVisible((prevState) => !prevState);
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        value={input}
-        placeholder="Enter The Goal"
-        onChangeText={inputHandler}
+    <View style={styles.screen}>
+      <Button onPress={makeVisble} title="Add Todo" />
+      <TodoInput
+        isVisible={isVisible}
+        onChangeVisible={changeVisibleHandler}
+        onAddTodo={addTodoHnadler}
       />
-      <Button title="Add Goal" onPress={addHnadler} />
-      {todos.map((todo, i) => (
-        <Text key={i} t>
-          {todo}
-        </Text>
-      ))}
+      <FlatList
+        data={todos}
+        keyExtractor={(item, index) => item.id}
+        renderItem={(itemData) => (
+          <TodoItem onDelete={deleteTodoHandler} item={itemData.item} />
+        )}
+      ></FlatList>
       <StatusBar style="auto" />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  screen: { padding: 50 },
 });
