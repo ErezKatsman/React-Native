@@ -2,10 +2,10 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import colors from "../constants/colors";
 
-export default function Header(props) {
+export default function Header({ title }) {
   return (
     <View style={styles.header}>
-      <Text style={styles.headerTitle}>{props.title}</Text>
+      <Text style={styles.headerTitle}>{title}</Text>
     </View>
   );
 }
